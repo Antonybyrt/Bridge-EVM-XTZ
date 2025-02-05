@@ -1,0 +1,91 @@
+archetype bridge(owner: address)
+
+/* ERRORS ------------------------- */
+
+constant AMOUNT_MUST_BE_GREATER_THAN_0 : string = "AMOUNT_MUST_BE_GREATER_THAN_0"
+constant UNSUFFISENT_LOCKED_FUNDS : string = "UNSUFFISENT_LOCKED_FUNDS"
+constant MUST_BE_REGISTERED_BEFORE : string = "MUST_BE_REGISTERED_BEFORE"
+
+/* ASSET --------------------------- */
+asset balances identified by user to big_map {
+    user : address;
+    userBalance : tez;
+}
+
+/* EVENTS --------------------------- */
+
+event Deposited{
+    From : address;
+    ethRecipient : string;
+    amount : tez;
+}
+
+event Withdrawn{
+    To : address;
+    amount : tez;
+}
+
+event Bridged{
+    To : address;
+    amount : tez;
+}
+
+function isRegistered(registered_address : address) : bool {
+    match balances[registered_address] with 
+    | some(s) -> return true
+    | none -> return false
+    end
+}
+
+/*
+ * Entry to Deposit funds in the vault
+ */
+entry deposit(EthRecipient : string) {
+    require {
+        d1: transferred > 0tz otherwise AMOUNT_MUST_BE_GREATER_THAN_0;
+    }
+    effect {
+        emit <Deposited>({caller; EthRecipient; transferred});
+        balances.add({caller; transferred});
+    }
+}
+
+/*
+ * Entry to Withdraw funds of and address in the vault
+ */
+entry withdraw(withdraw_amount : tez) {
+    require {
+        w1: withdraw_amount > 0tz otherwise AMOUNT_MUST_BE_GREATER_THAN_0;
+        w2: balances[caller].userBalance >= withdraw_amount otherwise UNSUFFISENT_LOCKED_FUNDS;
+    }
+    effect {
+        balances[caller].userBalance := 0tz;
+        transfer withdraw_amount to caller;
+        emit <Withdrawn> ({caller; withdraw_amount});
+    }
+}
+
+/*
+ * Entry to get the bridged tokens
+ */
+entry getBridged(bridged_to : address, bridged_amount : tez) {
+    require {
+        g1: bridged_amount > 0tz otherwise AMOUNT_MUST_BE_GREATER_THAN_0;
+    }
+    effect {
+        transfer bridged_amount to bridged_to;
+        emit <Bridged> ({bridged_to; bridged_amount});
+    }
+}
+
+/*
+ * entry to reset balance
+ */
+entry resetAmount(reset_address : address) {
+    require {
+        rr1: isRegistered(reset_address) = true otherwise MUST_BE_REGISTERED_BEFORE;
+    }
+    effect {
+        balances[reset_address].userBalance := 0tz;
+    }
+}

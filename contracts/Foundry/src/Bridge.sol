@@ -23,6 +23,11 @@ contract Bridge is Ownable {
         uint256 amount
     );
 
+    event Bridged(
+        address indexed to,
+        uint256 amount
+    );
+
     constructor(IERC20 _token) Ownable(msg.sender) {
         token = _token;
     }
@@ -37,14 +42,22 @@ contract Bridge is Ownable {
         emit Deposited(msg.sender, tezosRecipient, amount);
     }
 
-    function withdraw(address to, uint256 amount) external onlyOwner {
+    function withdraw(uint256 amount) external {
         require(amount > 0, "Le montant doit etre superieur a 0");
-        require(balances[to] >= amount, "Solde verrouille insuffisant pour l'adresse");
+        require(balances[msg.sender] >= amount, "Solde verrouille insuffisant pour l'adresse");
 
-        balances[to] -= amount;
+        balances[msg.sender] -= amount;
 
+        token.safeTransfer(msg.sender, amount);
+
+        emit Withdrawn(msg.sender, amount);
+    }
+
+    function getBridged(address to, uint256 amount) external onlyOwner{
+        require(amount > 0, "Le montant doit etre superieur a 0");
+        
         token.safeTransfer(to, amount);
-
-        emit Withdrawn(to, amount);
+        
+        emit Bridged(to, amount);
     }
 }

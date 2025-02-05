@@ -1,0 +1,16 @@
+{
+    "name": "bridge",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {
+      "@completium/archetype-ts-types": "^0.1.13",
+      "@completium/completium-cli": "^1.0.25",
+      "@completium/dapp-ts": "^0.1.11",
+      "@completium/event-listener": "^0.0.5",
+      "@completium/experiment-ts": "^1.0.3",
+      "typescript": "^5"
+    }
+  }
+  

@@ -68,7 +68,7 @@ const getBridged_arg_to_mich = (bridged_to: att.Address, bridged_amount: att.Tez
 const resetAmount_arg_to_mich = (reset_address: att.Address): att.Micheline => {
     return reset_address.to_mich();
 }
-export class Bridge {
+export class bridge {
     address: string | undefined;
     constructor(address: string | undefined = undefined) {
         this.address = address;
@@ -86,7 +86,7 @@ export class Bridge {
         throw new Error("Contract not initialised");
     }
     async deploy(owner: att.Address, params: Partial<ex.Parameters>) {
-        const address = (await ex.deploy("./contracts/bridge.arl", {
+        const address = (await ex.deploy("./contracts/Bridge.arl", {
             owner: owner.to_mich()
         }, params)).address;
         this.address = address;
@@ -209,11 +209,12 @@ export class Bridge {
         throw new Error("Contract not initialised");
     }
     errors = {
+        rr2: att.string_to_mich("\"ONLY_OWNER\""),
         rr1: att.string_to_mich("\"MUST_BE_REGISTERED_BEFORE\""),
+        g2: att.string_to_mich("\"ONLY_OWNER\""),
         g1: att.string_to_mich("\"AMOUNT_MUST_BE_GREATER_THAN_0\""),
         w2: att.string_to_mich("\"UNSUFFISENT_LOCKED_FUNDS\""),
         w1: att.string_to_mich("\"AMOUNT_MUST_BE_GREATER_THAN_0\""),
         d1: att.string_to_mich("\"AMOUNT_MUST_BE_GREATER_THAN_0\"")
     };
 }
-export const bridge = new Bridge();

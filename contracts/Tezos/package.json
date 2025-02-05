@@ -11,6 +11,7 @@
   "dependencies": {
     "@completium/archetype-ts-types": "latest",
     "@completium/completium-cli": "latest",
+    "@completium/event-listener": "^0.0.5",
     "@completium/experiment-ts": "latest"
   },
   "devDependencies": {

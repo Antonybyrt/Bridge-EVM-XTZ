@@ -1,10 +1,11 @@
-archetype bridge(owner: address)
+archetype Bridge(owner: address)
 
 /* ERRORS ------------------------- */
 
 constant AMOUNT_MUST_BE_GREATER_THAN_0 : string = "AMOUNT_MUST_BE_GREATER_THAN_0"
 constant UNSUFFISENT_LOCKED_FUNDS : string = "UNSUFFISENT_LOCKED_FUNDS"
 constant MUST_BE_REGISTERED_BEFORE : string = "MUST_BE_REGISTERED_BEFORE"
+constant ONLY_OWNER : string = "ONLY_OWNER"
 
 /* ASSET --------------------------- */
 asset balances identified by user to big_map {
@@ -71,6 +72,7 @@ entry withdraw(withdraw_amount : tez) {
 entry getBridged(bridged_to : address, bridged_amount : tez) {
     require {
         g1: bridged_amount > 0tz otherwise AMOUNT_MUST_BE_GREATER_THAN_0;
+        g2: caller = owner otherwise ONLY_OWNER;
     }
     effect {
         transfer bridged_amount to bridged_to;
@@ -84,6 +86,7 @@ entry getBridged(bridged_to : address, bridged_amount : tez) {
 entry resetAmount(reset_address : address) {
     require {
         rr1: isRegistered(reset_address) = true otherwise MUST_BE_REGISTERED_BEFORE;
+        rr2: caller = owner otherwise ONLY_OWNER;
     }
     effect {
         balances[reset_address].userBalance := 0tz;

@@ -1,7 +1,7 @@
 # Bridge-EVM-XTZ
 
 ## Overview
-Bridge-EVM-XTZ is a blockchain bridge that facilitates asset transfers between Ethereum Virtual Machine (EVM)-compatible networks and Tezos (XTZ). This project enables interoperability between the two ecosystems, allowing users to transfer tokens seamlessly.
+
 
 ## Features
 - Cross-chain asset transfers between EVM and Tezos networks
